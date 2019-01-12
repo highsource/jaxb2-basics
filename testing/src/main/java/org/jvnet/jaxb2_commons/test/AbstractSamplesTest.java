@@ -49,7 +49,7 @@ public abstract class AbstractSamplesTest extends TestCase {
 	protected File getBaseDir() {
 		try {
 			return (new File(getTestClass().getProtectionDomain()
-					.getCodeSource().getLocation().getFile())).getParentFile()
+					.getCodeSource().getLocation().toURI())).getParentFile()
 					.getParentFile().getAbsoluteFile();
 		} catch (Exception ex) {
 			throw new AssertionError(ex);
