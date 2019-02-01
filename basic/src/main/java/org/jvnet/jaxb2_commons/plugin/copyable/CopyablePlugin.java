@@ -23,7 +23,7 @@ import org.jvnet.jaxb2_commons.xjc.outline.FieldAccessorEx;
 import org.xml.sax.ErrorHandler;
 
 import com.sun.codemodel.JBlock;
-import com.sun.codemodel.JClass;
+//import com.sun.codemodel.JClass;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JConditional;
 import com.sun.codemodel.JDefinedClass;
@@ -154,11 +154,9 @@ public class CopyablePlugin extends AbstractParameterizablePlugin {
 
 			final JMethod newMethod = theClass.method(JMod.PUBLIC, theClass
 					.owner().ref(Object.class), "createNewInstance");
-			newMethod.annotate(Override.class);
-			{
-				final JBlock body = newMethod.body();
-				body._return(JExpr._new(theClass));
-			}
+			newMethod.annotate(Override.class); // DEMATIC
+			final JBlock body = newMethod.body();
+			body._return(JExpr._new(theClass));
 			return newMethod;
 		} else {
 			return existingMethod;
@@ -167,15 +165,12 @@ public class CopyablePlugin extends AbstractParameterizablePlugin {
 
 	protected JMethod generateObject$clone(final ClassOutline classOutline,
 			final JDefinedClass theClass) {
-
 		final JMethod clone = theClass.method(JMod.PUBLIC, theClass.owner()
 				.ref(Object.class), "clone");
-		clone.annotate(Override.class);
-		{
-			final JBlock body = clone.body();
-			body._return(JExpr.invoke("copyTo").arg(
-					JExpr.invoke("createNewInstance")));
-		}
+		clone.annotate(Override.class); // DEMATIC
+		final JBlock body = clone.body();
+		body._return(JExpr.invoke("copyTo").arg(
+				JExpr.invoke("createNewInstance")));
 		return clone;
 	}
 
@@ -185,18 +180,17 @@ public class CopyablePlugin extends AbstractParameterizablePlugin {
 		final JCodeModel codeModel = theClass.owner();
 		final JMethod copyTo$copyTo = theClass.method(JMod.PUBLIC,
 				codeModel.ref(Object.class), "copyTo");
-		copyTo$copyTo.annotate(Override.class);
-		{
-			final JVar target = copyTo$copyTo.param(Object.class, "target");
+		copyTo$copyTo.annotate(Override.class); // DEMATIC
+		final JVar target = copyTo$copyTo.param(Object.class, "target");
 
-			final JBlock body = copyTo$copyTo.body();
-			final JVar copyStrategy = body.decl(JMod.FINAL,
-					codeModel.ref(CopyStrategy2.class), "strategy",
-					createCopyStrategy(codeModel));
+		final JBlock body = copyTo$copyTo.body();
+		final JVar copyStrategy = body.decl(JMod.FINAL,
+				codeModel.ref(CopyStrategy2.class), "strategy2",
+				createCopyStrategy(codeModel));
 
-			body._return(JExpr.invoke("copyTo").arg(JExpr._null()).arg(target)
-					.arg(copyStrategy));
-		}
+		body._return(JExpr.invoke("copyTo").arg(JExpr._null()).arg(target)
+				.arg(copyStrategy));
+	
 		return copyTo$copyTo;
 	}
 
@@ -207,137 +201,143 @@ public class CopyablePlugin extends AbstractParameterizablePlugin {
 
 		final JMethod copyTo = theClass.method(JMod.PUBLIC,
 				codeModel.ref(Object.class), "copyTo");
-		copyTo.annotate(Override.class);
-		{
-			final JVar locator = copyTo.param(ObjectLocator.class, "locator");
-			final JVar target = copyTo.param(Object.class, "target");
-			final JVar copyStrategy = copyTo.param(CopyStrategy2.class,
-					"strategy");
+		copyTo.annotate(Override.class); // DEMATIC
+		final JVar locator = copyTo.param(ObjectLocator.class, "locator");
+		final JVar target = copyTo.param(Object.class, "target");
+		final JVar copyStrategy = copyTo.param(CopyStrategy2.class,
+				"strategy2");
 
-			final JBlock body = copyTo.body();
+		final JBlock body = copyTo.body();
 
-			final JVar draftCopy;
-			if (!classOutline.target.isAbstract()) {
-				draftCopy = body.decl(
-						JMod.FINAL,
-						codeModel.ref(Object.class),
-						"draftCopy",
+		final JVar draftCopy;
+		if (!classOutline.target.isAbstract()) {
+			draftCopy = body.decl(
+					JMod.FINAL,
+					codeModel.ref(Object.class),
+					"draftCopy",
 
-						JOp.cond(JOp.eq(target, JExpr._null()),
-								JExpr.invoke("createNewInstance"), target));
-			} else {
-				body._if(JExpr._null().eq(target))
-						._then()
-						._throw(JExpr
-								._new(codeModel
-										.ref(IllegalArgumentException.class))
-								.arg("Target argument must not be null for abstract copyable classes."));
-				draftCopy = target;
-			}
+					JOp.cond(JOp.eq(target, JExpr._null()),
+							JExpr.invoke("createNewInstance"), target));
+		} else {
+			body._if(JExpr._null().eq(target))
+					._then()
+					._throw(JExpr
+							._new(codeModel
+									.ref(IllegalArgumentException.class))
+							.arg("Target argument must not be null for abstract copyable classes."));
+			draftCopy = target;
+		}
 
-			Boolean superClassImplementsCopyTo = StrategyClassUtils
-					.superClassImplements(classOutline, getIgnoring(),
-							CopyTo2.class);
+		Boolean superClassImplementsCopyTo = StrategyClassUtils
+				.superClassImplements(classOutline, getIgnoring(),
+						CopyTo2.class);
 
-			if (superClassImplementsCopyTo == null) {
+		if (superClassImplementsCopyTo == null) {
 
-			} else if (superClassImplementsCopyTo.booleanValue()) {
-				body.invoke(JExpr._super(), "copyTo").arg(locator)
-						.arg(draftCopy).arg(copyStrategy);
+		} else if (superClassImplementsCopyTo.booleanValue()) {
+			body.invoke(JExpr._super(), "copyTo").arg(locator)
+					.arg(draftCopy).arg(copyStrategy);
 
-			} else {
+		} else {
 
-			}
+		}
 
-			final FieldOutline[] declaredFields = FieldOutlineUtils.filter(
-					classOutline.getDeclaredFields(), getIgnoring());
+		final FieldOutline[] declaredFields = FieldOutlineUtils.filter(
+				classOutline.getDeclaredFields(), getIgnoring());
 
-			if (declaredFields.length > 0) {
+		if (declaredFields.length > 0) {
 
-				final JBlock bl = body._if(draftCopy._instanceof(theClass))
+			final JBlock bl = body._if(draftCopy._instanceof(theClass))
+					._then();
+
+			final JVar copy = bl.decl(JMod.FINAL, theClass, "copy",
+					JExpr.cast(theClass, draftCopy));
+
+			for (final FieldOutline fieldOutline : declaredFields) {
+
+				final FieldAccessorEx sourceFieldAccessor = getFieldAccessorFactory()
+						.createFieldAccessor(fieldOutline, JExpr._this());
+				final FieldAccessorEx copyFieldAccessor = getFieldAccessorFactory()
+						.createFieldAccessor(fieldOutline, copy);
+
+				if (sourceFieldAccessor.isConstant()) {
+					continue;
+				}
+
+				final JBlock block = bl; // DEMATIC
+
+				final JExpression valueIsSet = (sourceFieldAccessor
+						.isAlwaysSet() || sourceFieldAccessor.hasSetValue() == null) ? JExpr.TRUE
+						: sourceFieldAccessor.hasSetValue();
+
+				final JVar shouldBeCopied = block.decl(codeModel
+						.ref(Boolean.class), fieldOutline.getPropertyInfo()
+						.getName(false) + "ShouldBeCopiedAndSet",
+						copyStrategy.invoke("shouldBeCopiedAndSet").arg(locator)
+								.arg(valueIsSet));
+
+				final JConditional ifShouldBeSetConditional = block._if(JOp
+						.eq(shouldBeCopied, codeModel.ref(Boolean.class)
+								.staticRef("TRUE")));
+
+				final JBlock ifShouldBeSetBlock = ifShouldBeSetConditional
+						._then();
+				final JConditional ifShouldNotBeSetConditional = ifShouldBeSetConditional
+						._elseif(JOp.eq(
+								shouldBeCopied,
+								codeModel.ref(Boolean.class).staticRef(
+										"FALSE")));
+				final JBlock ifShouldBeUnsetBlock = ifShouldNotBeSetConditional
 						._then();
 
-				final JVar copy = bl.decl(JMod.FINAL, theClass, "copy",
-						JExpr.cast(theClass, draftCopy));
+				final JType copyFieldType = sourceFieldAccessor.getType();
+				
+				//final JVar sourceField = ifShouldBeSetBlock.decl( copyFieldType, "source" + fieldOutline.getPropertyInfo().getName(true));
+				//sourceFieldAccessor.toRawValue(ifShouldBeSetBlock, sourceField);
+				
+				String propertyName = fieldOutline.getPropertyInfo().getName(true);// DEMATIC
+				final JVar sourceField = ifShouldBeSetBlock.decl(copyFieldType, "source" + propertyName, JExpr._this().invoke(createMethodName(fieldOutline))); // DEMATIC 
+				
+				final JExpression builtCopy = JExpr
+						.invoke(copyStrategy, "copy")
+						.arg(codeModel
+								.ref(LocatorUtils.class)
+								.staticInvoke("property")
+								.arg(locator)
+								.arg(fieldOutline.getPropertyInfo()
+										.getName(false)).arg(sourceField))
+						.arg(sourceField).arg(valueIsSet);
+				final JVar copyField = ifShouldBeSetBlock.decl(
+						copyFieldType,
+						"copy"
+								+ fieldOutline.getPropertyInfo().getName(
+										true),
+						copyFieldType.isPrimitive() ? builtCopy :
 
-				for (final FieldOutline fieldOutline : declaredFields) {
-
-					final FieldAccessorEx sourceFieldAccessor = getFieldAccessorFactory()
-							.createFieldAccessor(fieldOutline, JExpr._this());
-					final FieldAccessorEx copyFieldAccessor = getFieldAccessorFactory()
-							.createFieldAccessor(fieldOutline, copy);
-
-					if (sourceFieldAccessor.isConstant()) {
-						continue;
-					}
-
-					final JBlock block = bl.block();
-
-					final JExpression valueIsSet = (sourceFieldAccessor
-							.isAlwaysSet() || sourceFieldAccessor.hasSetValue() == null) ? JExpr.TRUE
-							: sourceFieldAccessor.hasSetValue();
-
-					final JVar shouldBeCopied = block.decl(codeModel
-							.ref(Boolean.class), fieldOutline.getPropertyInfo()
-							.getName(false) + "ShouldBeCopiedAndSet",
-							copyStrategy.invoke("shouldBeCopiedAndSet").arg(locator)
-									.arg(valueIsSet));
-
-					final JConditional ifShouldBeSetConditional = block._if(JOp
-							.eq(shouldBeCopied, codeModel.ref(Boolean.class)
-									.staticRef("TRUE")));
-
-					final JBlock ifShouldBeSetBlock = ifShouldBeSetConditional
-							._then();
-					final JConditional ifShouldNotBeSetConditional = ifShouldBeSetConditional
-							._elseif(JOp.eq(
-									shouldBeCopied,
-									codeModel.ref(Boolean.class).staticRef(
-											"FALSE")));
-					final JBlock ifShouldBeUnsetBlock = ifShouldNotBeSetConditional
-							._then();
-
-					final JType copyFieldType = sourceFieldAccessor.getType();
-					final JVar sourceField = ifShouldBeSetBlock.decl(
-							copyFieldType,
-							"source"
-									+ fieldOutline.getPropertyInfo().getName(
-											true));
-					sourceFieldAccessor.toRawValue(ifShouldBeSetBlock,
-							sourceField);
-					final JExpression builtCopy = JExpr
-							.invoke(copyStrategy, "copy")
-							.arg(codeModel
-									.ref(LocatorUtils.class)
-									.staticInvoke("property")
-									.arg(locator)
-									.arg(fieldOutline.getPropertyInfo()
-											.getName(false)).arg(sourceField))
-							.arg(sourceField).arg(valueIsSet);
-					final JVar copyField = ifShouldBeSetBlock.decl(
-							copyFieldType,
-							"copy"
-									+ fieldOutline.getPropertyInfo().getName(
-											true),
-							copyFieldType.isPrimitive() ? builtCopy :
-
-							JExpr.cast(copyFieldType, builtCopy));
-					if (copyFieldType instanceof JClass
-							&& ((JClass) copyFieldType).isParameterized()) {
-						copyField.annotate(SuppressWarnings.class).param(
-								"value", "unchecked");
-					}
-					copyFieldAccessor.fromRawValue(ifShouldBeSetBlock, "unique"
-							+ fieldOutline.getPropertyInfo().getName(true),
-							copyField);
-					
-					copyFieldAccessor.unsetValues(ifShouldBeUnsetBlock);
-				}
+						JExpr.cast(copyFieldType, builtCopy));
+//				if (copyFieldType instanceof JClass
+//						&& ((JClass) copyFieldType).isParameterized()) {
+//					copyField.annotate(SuppressWarnings.class).param(
+//							"value", "unchecked");
+//				}
+				copyFieldAccessor.fromRawValue(ifShouldBeSetBlock, "unique"
+						+ fieldOutline.getPropertyInfo().getName(true),
+						copyField);
+				
+				copyFieldAccessor.unsetValues(ifShouldBeUnsetBlock);
 			}
-
-			body._return(draftCopy);
 		}
+
+		body._return(draftCopy);
 		return copyTo;
 	}
-
+	
+	private String createMethodName(FieldOutline fieldOutline) {
+		String name = fieldOutline.getPropertyInfo().getName(true);
+		String type = fieldOutline.getRawType().name();
+		if (type.toLowerCase().equals("boolean")) {
+			return "is" + name;
+		}
+		return "get" + name;
+	}
 }

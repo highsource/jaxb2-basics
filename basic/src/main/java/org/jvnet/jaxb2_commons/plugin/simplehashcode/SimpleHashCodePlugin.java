@@ -57,71 +57,75 @@ public class SimpleHashCodePlugin extends
 
 	@Override
 	protected void generate(ClassOutline classOutline, JDefinedClass theClass) {
-
 		final JCodeModel codeModel = theClass.owner();
-		final JMethod object$hashCode = theClass.method(JMod.PUBLIC,
-				codeModel.INT, "hashCode");
-		object$hashCode.annotate(Override.class);
-		{
-			final JBlock body = object$hashCode.body();
+		final JMethod object$hashCode = theClass.method(JMod.PUBLIC, codeModel.INT, "hashCode");
+		object$hashCode.annotate(Override.class); // DEMATIC
 
-			final JExpression currentHashCodeExpression = JExpr.lit(1);
+		final JBlock body = object$hashCode.body();
 
-			final JVar currentHashCode = body.decl(codeModel.INT,
-					"currentHashCode", currentHashCodeExpression);
+		final JExpression currentHashCodeExpression = JExpr.lit(1);
 
-			final Boolean superClassImplementsHashCode = StrategyClassUtils
-					.superClassNotIgnored(classOutline, getIgnoring());
+		final JVar currentHashCode = body.decl(codeModel.INT,
+				"currentHashCode", currentHashCodeExpression);
 
-			if (superClassImplementsHashCode != null) {
-				body.assign(
-						currentHashCode,
-						currentHashCode.mul(JExpr.lit(getMultiplier())).plus(
-								JExpr._super().invoke("hashCode")));
-			}
+		final Boolean superClassImplementsHashCode = StrategyClassUtils
+				.superClassNotIgnored(classOutline, getIgnoring());
 
-			final FieldOutline[] declaredFields = FieldOutlineUtils.filter(
-					classOutline.getDeclaredFields(), getIgnoring());
+		if (superClassImplementsHashCode != null) {
+			body.assign(
+					currentHashCode,
+					currentHashCode.mul(JExpr.lit(getMultiplier())).plus(
+							JExpr._super().invoke("hashCode")));
+		}
 
-			if (declaredFields.length > 0) {
+		final FieldOutline[] declaredFields = FieldOutlineUtils.filter(
+				classOutline.getDeclaredFields(), getIgnoring());
 
-				for (final FieldOutline fieldOutline : declaredFields) {
-					final FieldAccessorEx fieldAccessor = getFieldAccessorFactory()
-							.createFieldAccessor(fieldOutline, JExpr._this());
-					if (fieldAccessor.isConstant()) {
-						continue;
-					}
-					final JBlock block = body.block();
-					block.assign(currentHashCode,
-							currentHashCode.mul(JExpr.lit(getMultiplier())));
+		if (declaredFields.length > 0) {
 
-					String propertyName = fieldOutline.getPropertyInfo()
-							.getName(true);
-					final JVar value = block.decl(fieldAccessor.getType(),
-							"the" + propertyName);
+			for (final FieldOutline fieldOutline : declaredFields) {
+				final FieldAccessorEx fieldAccessor = getFieldAccessorFactory()
+						.createFieldAccessor(fieldOutline, JExpr._this());
+				if (fieldAccessor.isConstant()) {
+					continue;
+				}
+				final JBlock block = body; // DEMATIC
+				block.assign(currentHashCode,
+						currentHashCode.mul(JExpr.lit(getMultiplier())));
 
-					fieldAccessor.toRawValue(block, value);
-					final JType exposedType = fieldAccessor.getType();
+				String propertyName = fieldOutline.getPropertyInfo().getName(true);// DEMATIC
+				final JVar value = block.decl(fieldAccessor.getType(), "the" + propertyName,JExpr._this().invoke(createMethodName(fieldOutline))); // DEMATIC 
+				
+				final JType exposedType = fieldAccessor.getType();
 
-					final Collection<JType> possibleTypes = FieldUtils
-							.getPossibleTypes(fieldOutline, Aspect.EXPOSED);
-					final boolean isAlwaysSet = fieldAccessor.isAlwaysSet();
+				final Collection<JType> possibleTypes = FieldUtils
+						.getPossibleTypes(fieldOutline, Aspect.EXPOSED);
+				final boolean isAlwaysSet = fieldAccessor.isAlwaysSet();
 //					final JExpression hasSetValue = exposedType.isPrimitive() ? JExpr.TRUE
 //							: value.ne(JExpr._null());
-					
-					final JExpression hasSetValue = (fieldAccessor.isAlwaysSet() || fieldAccessor
-							.hasSetValue() == null) ? JExpr.TRUE
-							: fieldAccessor.hasSetValue();					
-					getCodeGenerator().generate(
-							block,
-							exposedType,
-							possibleTypes,
-							isAlwaysSet,
-							new HashCodeArguments(codeModel, currentHashCode,
-									getMultiplier(), value, hasSetValue));
-				}
+				
+				final JExpression hasSetValue = (fieldAccessor.isAlwaysSet() || fieldAccessor
+						.hasSetValue() == null) ? JExpr.TRUE
+						: fieldAccessor.hasSetValue();					
+				getCodeGenerator().generate(
+						block,
+						exposedType,
+						possibleTypes,
+						isAlwaysSet,
+						new HashCodeArguments(codeModel, currentHashCode,
+								getMultiplier(), value, hasSetValue));
 			}
-			body._return(currentHashCode);
 		}
+		body._return(currentHashCode);		
 	}
+	
+	private String createMethodName(FieldOutline fieldOutline) {
+		String name = fieldOutline.getPropertyInfo().getName(true);
+		String type = fieldOutline.getRawType().name();
+		if (type.toLowerCase().equals("boolean")) {
+			return "is" + name;
+		}
+		return "get" + name;
+	}
+
 }

@@ -55,8 +55,10 @@ public class SimpleEqualsPlugin extends
 		final JCodeModel codeModel = theClass.owner();
 		final JMethod objectEquals = theClass.method(JMod.PUBLIC,
 				codeModel.BOOLEAN, "equals");
-		objectEquals.annotate(Override.class);
+		objectEquals.annotate(Override.class); // DEMATIC
+		
 		final JVar object = objectEquals.param(Object.class, "object");
+		
 		final JBlock body = objectEquals.body();
 
 		JExpression objectIsNull = object.eq(JExpr._null());
@@ -94,18 +96,13 @@ public class SimpleEqualsPlugin extends
 					continue;
 				}
 
-				final JBlock block = body.block();
+				final JBlock block = body; // DEMATIC
 
-				final String name = fieldOutline.getPropertyInfo()
-						.getName(true);
-
+				final String name = fieldOutline.getPropertyInfo().getName(true);
 				final JType type = leftFieldAccessor.getType();
-				final JVar leftValue = block.decl(type, "left" + name);
-				leftFieldAccessor.toRawValue(block, leftValue);
-
-				final JVar rightValue = block.decl(
-						rightFieldAccessor.getType(), "right" + name);
-				rightFieldAccessor.toRawValue(block, rightValue);
+				
+				final JVar leftValue = block.decl(type, "left" + name, JExpr._this().invoke(createMethodName(fieldOutline))); // DEMATIC 
+				final JVar rightValue = block.decl(	rightFieldAccessor.getType(), "right" + name,_that.invoke(createMethodName(fieldOutline))); // DEMATIC  
 
 				final JType exposedType = leftFieldAccessor.getType();
 
@@ -137,4 +134,15 @@ public class SimpleEqualsPlugin extends
 		body._return(JExpr.TRUE);
 
 	}
+	
+	
+	private String createMethodName(FieldOutline fieldOutline) {
+		String name = fieldOutline.getPropertyInfo().getName(true);
+		String type = fieldOutline.getRawType().name();
+		if (type.toLowerCase().equals("boolean")) {
+			return "is" + name;
+		}
+		return "get" + name;
+	}
+
 }
