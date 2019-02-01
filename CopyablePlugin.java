@@ -23,7 +23,7 @@ import org.jvnet.jaxb2_commons.xjc.outline.FieldAccessorEx;
 import org.xml.sax.ErrorHandler;
 
 import com.sun.codemodel.JBlock;
-//import com.sun.codemodel.JClass;
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JConditional;
 import com.sun.codemodel.JDefinedClass;
@@ -315,11 +315,11 @@ public class CopyablePlugin extends AbstractParameterizablePlugin {
 						copyFieldType.isPrimitive() ? builtCopy :
 
 						JExpr.cast(copyFieldType, builtCopy));
-//				if (copyFieldType instanceof JClass
-//						&& ((JClass) copyFieldType).isParameterized()) {
-//					copyField.annotate(SuppressWarnings.class).param(
-//							"value", "unchecked");
-//				}
+				if (copyFieldType instanceof JClass
+						&& ((JClass) copyFieldType).isParameterized()) {
+					copyField.annotate(SuppressWarnings.class).param(
+							"value", "unchecked");
+				}
 				copyFieldAccessor.fromRawValue(ifShouldBeSetBlock, "unique"
 						+ fieldOutline.getPropertyInfo().getName(true),
 						copyField);
