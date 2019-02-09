@@ -16,6 +16,8 @@
 		<module>issues</module>
 		<module>JAXB-1058</module>
 		<module>one</module>
+		<module>qa-simple</module>
+		<module>qa-strategic</module>
 		<module>simple-hashCode-equals-01</module>
 		<module>simplify-01</module>
 		<module>superclass</module>
