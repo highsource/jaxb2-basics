@@ -132,19 +132,17 @@ public class MergeablePlugin extends AbstractParameterizablePlugin {
 		JCodeModel codeModel = theClass.owner();
 		final JMethod mergeFrom$mergeFrom = theClass.method(JMod.PUBLIC,
 				codeModel.VOID, "mergeFrom");
-		mergeFrom$mergeFrom.annotate(Override.class);
-		{
-			final JVar left = mergeFrom$mergeFrom.param(Object.class, "left");
-			final JVar right = mergeFrom$mergeFrom.param(Object.class, "right");
-			final JBlock body = mergeFrom$mergeFrom.body();
+		mergeFrom$mergeFrom.annotate(Override.class); // DEMATIC
+		final JVar left = mergeFrom$mergeFrom.param(Object.class, "left");
+		final JVar right = mergeFrom$mergeFrom.param(Object.class, "right");
+		final JBlock body = mergeFrom$mergeFrom.body();
 
-			final JVar mergeStrategy = body.decl(JMod.FINAL,
-					codeModel.ref(MergeStrategy2.class), "strategy",
-					createMergeStrategy(codeModel));
+		final JVar mergeStrategy = body.decl(JMod.FINAL,
+				codeModel.ref(MergeStrategy2.class), "strategy2",
+				createMergeStrategy(codeModel));
 
-			body.invoke("mergeFrom").arg(JExpr._null()).arg(JExpr._null())
-					.arg(left).arg(right).arg(mergeStrategy);
-		}
+		body.invoke("mergeFrom").arg(JExpr._null()).arg(JExpr._null())
+				.arg(left).arg(right).arg(mergeStrategy);
 		return mergeFrom$mergeFrom;
 	}
 
@@ -154,143 +152,143 @@ public class MergeablePlugin extends AbstractParameterizablePlugin {
 
 		final JMethod mergeFrom = theClass.method(JMod.PUBLIC, codeModel.VOID,
 				"mergeFrom");
-		mergeFrom.annotate(Override.class);
-		{
-			final JVar leftLocator = mergeFrom.param(ObjectLocator.class,
-					"leftLocator");
-			final JVar rightLocator = mergeFrom.param(ObjectLocator.class,
-					"rightLocator");
-			final JVar left = mergeFrom.param(Object.class, "left");
-			final JVar right = mergeFrom.param(Object.class, "right");
+		mergeFrom.annotate(Override.class); // DEMATIC
+		final JVar leftLocator = mergeFrom.param(ObjectLocator.class,
+				"leftLocator");
+		final JVar rightLocator = mergeFrom.param(ObjectLocator.class,
+				"rightLocator");
+		final JVar left = mergeFrom.param(Object.class, "left");
+		final JVar right = mergeFrom.param(Object.class, "right");
 
-			final JVar mergeStrategy = mergeFrom.param(MergeStrategy2.class,
-					"strategy");
+		final JVar mergeStrategy = mergeFrom.param(MergeStrategy2.class,
+				"strategy2");
 
-			final JBlock methodBody = mergeFrom.body();
+		final JBlock methodBody = mergeFrom.body();
 
-			Boolean superClassImplementsMergeFrom = StrategyClassUtils
-					.superClassImplements(classOutline, getIgnoring(),
-							MergeFrom2.class);
+		Boolean superClassImplementsMergeFrom = StrategyClassUtils
+				.superClassImplements(classOutline, getIgnoring(),
+						MergeFrom2.class);
 
-			if (superClassImplementsMergeFrom == null) {
+		if (superClassImplementsMergeFrom == null) {
 
-			} else if (superClassImplementsMergeFrom.booleanValue()) {
-				methodBody.invoke(JExpr._super(), "mergeFrom").arg(leftLocator)
-						.arg(rightLocator).arg(left).arg(right)
-						.arg(mergeStrategy);
-			} else {
+		} else if (superClassImplementsMergeFrom.booleanValue()) {
+			methodBody.invoke(JExpr._super(), "mergeFrom").arg(leftLocator)
+					.arg(rightLocator).arg(left).arg(right)
+					.arg(mergeStrategy);
+		} else {
 
-			}
+		}
 
-			final FieldOutline[] declaredFields = FieldOutlineUtils.filter(
-					classOutline.getDeclaredFields(), getIgnoring());
+		final FieldOutline[] declaredFields = FieldOutlineUtils.filter(
+				classOutline.getDeclaredFields(), getIgnoring());
 
-			if (declaredFields.length > 0) {
+		if (declaredFields.length > 0) {
 
-				final JBlock body = methodBody._if(right._instanceof(theClass))
+			final JBlock body = methodBody._if(right._instanceof(theClass))
+					._then();
+
+			JVar target = body.decl(JMod.FINAL, theClass, "target",
+					JExpr._this());
+			JVar leftObject = body.decl(JMod.FINAL, theClass, "leftObject",
+					JExpr.cast(theClass, left));
+			JVar rightObject = body.decl(JMod.FINAL, theClass,
+					"rightObject", JExpr.cast(theClass, right));
+			for (final FieldOutline fieldOutline : declaredFields) {
+				final FieldAccessorEx leftFieldAccessor = getFieldAccessorFactory()
+						.createFieldAccessor(fieldOutline, leftObject);
+				final FieldAccessorEx rightFieldAccessor = getFieldAccessorFactory()
+						.createFieldAccessor(fieldOutline, rightObject);
+				if (leftFieldAccessor.isConstant()
+						|| rightFieldAccessor.isConstant()) {
+					continue;
+				}
+
+				final JBlock block = body; // DEMATIC
+
+				final JExpression leftFieldHasSetValue = (leftFieldAccessor
+						.isAlwaysSet() || leftFieldAccessor.hasSetValue() == null) ? JExpr.TRUE
+						: leftFieldAccessor.hasSetValue();
+
+				final JExpression rightFieldHasSetValue = (rightFieldAccessor
+						.isAlwaysSet() || rightFieldAccessor.hasSetValue() == null) ? JExpr.TRUE
+						: rightFieldAccessor.hasSetValue();
+
+				final JVar shouldBeSet = block.decl(
+						codeModel.ref(Boolean.class),
+						fieldOutline.getPropertyInfo().getName(false)
+								+ "ShouldBeMergedAndSet",
+						mergeStrategy.invoke("shouldBeMergedAndSet")
+								.arg(leftLocator).arg(rightLocator)
+								.arg(leftFieldHasSetValue)
+								.arg(rightFieldHasSetValue));
+
+				final JConditional ifShouldBeSetConditional = block._if(JOp
+						.eq(shouldBeSet, codeModel.ref(Boolean.class)
+								.staticRef("TRUE")));
+
+				final JBlock ifShouldBeSetBlock = ifShouldBeSetConditional
 						._then();
+				final JConditional ifShouldNotBeSetConditional = ifShouldBeSetConditional
+						._elseif(JOp.eq(
+								shouldBeSet,
+								codeModel.ref(Boolean.class).staticRef(
+										"FALSE")));
+				final JBlock ifShouldBeUnsetBlock = ifShouldNotBeSetConditional
+						._then();
+				// final JBlock ifShouldBeIgnoredBlock =
+				// ifShouldNotBeSetConditional
+				// ._else();
 
-				JVar target = body.decl(JMod.FINAL, theClass, "target",
-						JExpr._this());
-				JVar leftObject = body.decl(JMod.FINAL, theClass, "leftObject",
-						JExpr.cast(theClass, left));
-				JVar rightObject = body.decl(JMod.FINAL, theClass,
-						"rightObject", JExpr.cast(theClass, right));
-				for (final FieldOutline fieldOutline : declaredFields) {
-					final FieldAccessorEx leftFieldAccessor = getFieldAccessorFactory()
-							.createFieldAccessor(fieldOutline, leftObject);
-					final FieldAccessorEx rightFieldAccessor = getFieldAccessorFactory()
-							.createFieldAccessor(fieldOutline, rightObject);
-					if (leftFieldAccessor.isConstant()
-							|| rightFieldAccessor.isConstant()) {
-						continue;
-					}
+				String propertyName = fieldOutline.getPropertyInfo().getName(true);
 
-					final JBlock block = body.block();
+				//final JVar leftField = ifShouldBeSetBlock.decl(leftFieldAccessor.getType(),"lhs" + fieldOutline.getPropertyInfo().getName(true));
+				//leftFieldAccessor.toRawValue(ifShouldBeSetBlock, leftField);
+				final JVar leftField = ifShouldBeSetBlock.decl(leftFieldAccessor.getType(), "lhs" + propertyName, leftObject.invoke(createMethodName(fieldOutline))); // DEMATIC 
 
-					final JExpression leftFieldHasSetValue = (leftFieldAccessor
-							.isAlwaysSet() || leftFieldAccessor.hasSetValue() == null) ? JExpr.TRUE
-							: leftFieldAccessor.hasSetValue();
+				//final JVar rightField = ifShouldBeSetBlock.decl(rightFieldAccessor.getType(),"rhs" + fieldOutline.getPropertyInfo().getName(true));
+				//rightFieldAccessor.toRawValue(ifShouldBeSetBlock, rightField);
+				final JVar rightField = ifShouldBeSetBlock.decl(leftFieldAccessor.getType(), "rhs" + propertyName, rightObject.invoke(createMethodName(fieldOutline))); // DEMATIC 
+				
+				final JExpression leftFieldLocator = codeModel
+						.ref(LocatorUtils.class).staticInvoke("property")
+						.arg(leftLocator)
+						.arg(fieldOutline.getPropertyInfo().getName(false))
+						.arg(leftField);
+				final JExpression rightFieldLocator = codeModel
+						.ref(LocatorUtils.class).staticInvoke("property")
+						.arg(rightLocator)
+						.arg(fieldOutline.getPropertyInfo().getName(false))
+						.arg(rightField);
 
-					final JExpression rightFieldHasSetValue = (rightFieldAccessor
-							.isAlwaysSet() || rightFieldAccessor.hasSetValue() == null) ? JExpr.TRUE
-							: rightFieldAccessor.hasSetValue();
-
-					final JVar shouldBeSet = block.decl(
-							codeModel.ref(Boolean.class),
-							fieldOutline.getPropertyInfo().getName(false)
-									+ "ShouldBeMergedAndSet",
-							mergeStrategy.invoke("shouldBeMergedAndSet")
-									.arg(leftLocator).arg(rightLocator)
-									.arg(leftFieldHasSetValue)
-									.arg(rightFieldHasSetValue));
-
-					final JConditional ifShouldBeSetConditional = block._if(JOp
-							.eq(shouldBeSet, codeModel.ref(Boolean.class)
-									.staticRef("TRUE")));
-
-					final JBlock ifShouldBeSetBlock = ifShouldBeSetConditional
-							._then();
-					final JConditional ifShouldNotBeSetConditional = ifShouldBeSetConditional
-							._elseif(JOp.eq(
-									shouldBeSet,
-									codeModel.ref(Boolean.class).staticRef(
-											"FALSE")));
-					final JBlock ifShouldBeUnsetBlock = ifShouldNotBeSetConditional
-							._then();
-					// final JBlock ifShouldBeIgnoredBlock =
-					// ifShouldNotBeSetConditional
-					// ._else();
-
-					final JVar leftField = ifShouldBeSetBlock.decl(
-							leftFieldAccessor.getType(),
-							"lhs"
-									+ fieldOutline.getPropertyInfo().getName(
-											true));
-					leftFieldAccessor.toRawValue(ifShouldBeSetBlock, leftField);
-					final JVar rightField = ifShouldBeSetBlock.decl(
-							rightFieldAccessor.getType(),
-							"rhs"
-									+ fieldOutline.getPropertyInfo().getName(
-											true));
-
-					rightFieldAccessor.toRawValue(ifShouldBeSetBlock,
-							rightField);
-
-					final JExpression leftFieldLocator = codeModel
-							.ref(LocatorUtils.class).staticInvoke("property")
-							.arg(leftLocator)
-							.arg(fieldOutline.getPropertyInfo().getName(false))
-							.arg(leftField);
-					final JExpression rightFieldLocator = codeModel
-							.ref(LocatorUtils.class).staticInvoke("property")
-							.arg(rightLocator)
-							.arg(fieldOutline.getPropertyInfo().getName(false))
-							.arg(rightField);
-
-					final FieldAccessorEx targetFieldAccessor = getFieldAccessorFactory()
-							.createFieldAccessor(fieldOutline, target);
-					final JExpression mergedValue = JExpr.cast(
+				final FieldAccessorEx targetFieldAccessor = getFieldAccessorFactory()
+						.createFieldAccessor(fieldOutline, target);
+				final JExpression mergedValue;
+				if (targetFieldAccessor.getType().name().equals("byte")|| 
+					targetFieldAccessor.getType().name().equals("int")|| 
+					targetFieldAccessor.getType().name().equals("float")|| 
+					targetFieldAccessor.getType().name().equals("long")|| 
+					targetFieldAccessor.getType().name().equals("short")||
+					targetFieldAccessor.getType().name().equals("Object")
+				) {
+					mergedValue = mergeStrategy.invoke("merge").arg(leftFieldLocator)
+									.arg(rightFieldLocator).arg(leftField)
+									.arg(rightField).arg(leftFieldHasSetValue)
+									.arg(rightFieldHasSetValue);
+	
+				} else {
+					mergedValue = JExpr.cast(
 							targetFieldAccessor.getType(),
 							mergeStrategy.invoke("merge").arg(leftFieldLocator)
 									.arg(rightFieldLocator).arg(leftField)
 									.arg(rightField).arg(leftFieldHasSetValue)
 									.arg(rightFieldHasSetValue));
-
-					final JVar merged = ifShouldBeSetBlock.decl(
-							rightFieldAccessor.getType(),
-							"merged"
-									+ fieldOutline.getPropertyInfo().getName(
-											true), mergedValue);
-
-					targetFieldAccessor.fromRawValue(
-							ifShouldBeSetBlock,
-							"unique"
-									+ fieldOutline.getPropertyInfo().getName(
-											true), merged);
-
-					targetFieldAccessor.unsetValues(ifShouldBeUnsetBlock);
 				}
+				
+				final JVar merged = ifShouldBeSetBlock.decl( rightFieldAccessor.getType(), "merged" + fieldOutline.getPropertyInfo().getName(true), mergedValue);
+
+				targetFieldAccessor.fromRawValue( ifShouldBeSetBlock, "unique" + fieldOutline.getPropertyInfo().getName(true), merged);
+
+				targetFieldAccessor.unsetValues(ifShouldBeUnsetBlock);
 			}
 		}
 		return mergeFrom;
@@ -305,14 +303,23 @@ public class MergeablePlugin extends AbstractParameterizablePlugin {
 
 			final JMethod newMethod = theClass.method(JMod.PUBLIC, theClass
 					.owner().ref(Object.class), "createNewInstance");
-			newMethod.annotate(Override.class);
-			{
-				final JBlock body = newMethod.body();
-				body._return(JExpr._new(theClass));
-			}
+			newMethod.annotate(Override.class); // DEMATIC
+			final JBlock body = newMethod.body();
+			body._return(JExpr._new(theClass));
+			
 			return newMethod;
 		} else {
 			return existingMethod;
 		}
 	}
+	
+	private String createMethodName(FieldOutline fieldOutline) {
+		String name = fieldOutline.getPropertyInfo().getName(true);
+		String type = fieldOutline.getRawType().name();
+		if (type.toLowerCase().equals("boolean")) {
+			return "is" + name;
+		}
+		return "get" + name;
+	}
+
 }
