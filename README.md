@@ -20,11 +20,11 @@ JAXB2 Basics can only be used with Java 1.7 and above.
 * [SimpleHashCode Plugin](https://github.com/highsource/jaxb2-basics/wiki/JAXB2-SimpleHashCode-Plugin) - generates runtime-free reflection-free `hashCode()` methods.
 * Equals Plugin - generates reflection-free strategic `equals(...)` method.
 * HashCode Plugin - generates reflection-free strategic `hashCode()` method.
-* ToString Plugin - generates reflection-free strategic `toString()` methods.
+* [ToString Plugin](https://github.com/highsource/jaxb2-basics/wiki/JAXB2-ToString-Plugin) - generates reflection-free strategic `toString()` methods.
 * Copyable Plugin - generates reflection-free strategic `copy(...)` deep copying.
 * Mergeable Plugin - generates reflection-free strategic `merge(...)` methods to merge data from two source objects into the given object.
-* Inheritance Plugin - makes schema-derived classes extend certain class or implement certain interfaces.
-* Wildcard Plugin - allows you to specify the wildcard mode for the wildcard properties.
+* [Inheritance Plugin](https://github.com/highsource/jaxb2-basics/wiki/JAXB2-Inheritance-Plugin) - makes schema-derived classes extend certain class or implement certain interfaces.
+* [Wildcard Plugin](https://github.com/highsource/jaxb2-basics/wiki/JAXB2-Wildcard-Plugin) - allows you to specify the wildcard mode for the wildcard properties.
 * AutoInheritance Plugin - makes classes derived from global elements or complex types extend or implement certain classes or interfaces automatically.
 * [Setters Plugin](https://github.com/highsource/jaxb2-basics/wiki/JAXB2-Setters-Plugin) - generates setters for collections.
 * [Simplify Plugin](https://github.com/highsource/jaxb2-basics/wiki/JAXB2-Simplify-Plugin) - simplifies weird properties like `aOrBOrC`.
