@@ -8,11 +8,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.jvnet.jaxb2_commons.lang.CopyStrategy2;
 import org.jvnet.jaxb2_commons.lang.CopyTo2;
+import org.jvnet.jaxb2_commons.lang.DefaultCopyStrategy;
 import org.jvnet.jaxb2_commons.lang.JAXBCopyStrategy;
 import org.jvnet.jaxb2_commons.locator.ObjectLocator;
 
@@ -48,6 +53,15 @@ public class CopyStrategyTest extends TestCase {
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
+	}
+
+	public void testXMLGregorianCalendar() throws Exception {
+		final XMLGregorianCalendar calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar("2022-01-14");
+		final Object copyObj = new DefaultCopyStrategy().copy(null, calendar);
+		Assert.assertTrue(copyObj instanceof XMLGregorianCalendar);
+		Assert.assertEquals(calendar, copyObj);
+		Assert.assertNotSame(calendar, copyObj);
+		Assert.assertEquals("2022-01-14", ((XMLGregorianCalendar) copyObj).toXMLFormat());
 	}
 
 	@XmlRootElement(name = "a")

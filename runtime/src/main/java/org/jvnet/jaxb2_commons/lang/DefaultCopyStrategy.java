@@ -2,6 +2,7 @@ package org.jvnet.jaxb2_commons.lang;
 
 import static org.jvnet.jaxb2_commons.locator.util.LocatorUtils.item;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
@@ -220,13 +221,8 @@ public class DefaultCopyStrategy implements CopyStrategy2, CopyStrategy {
 	}
 
 	protected Object copyInternal(ObjectLocator locator, Cloneable object) {
-		Method method = null;
-
-		try {
-			method = object.getClass().getMethod("clone", (Class[]) null);
-		} catch (NoSuchMethodException nsmex) {
-			method = null;
-		}
+		final Method canAccessMethod = getCanAccessMethod();
+		final Method method = getCallableCloneMethod(object, canAccessMethod);
 
 		if (method == null || !Modifier.isPublic(method.getModifiers())) {
 
@@ -242,7 +238,8 @@ public class DefaultCopyStrategy implements CopyStrategy2, CopyStrategy {
 									+ "with a public method."));
 		}
 
-		final boolean wasAccessible = method.isAccessible();
+		// if "canAccessMethod" is available (java9+), getCallableCloneMethod() only returns accessible methods
+		final boolean wasAccessible = canAccessMethod != null || method.isAccessible();
 		try {
 			if (!wasAccessible) {
 				try {
@@ -265,6 +262,44 @@ public class DefaultCopyStrategy implements CopyStrategy2, CopyStrategy {
 				} catch (SecurityException ignore) {
 				}
 			}
+		}
+	}
+
+	/*
+	 search for accessible clone() method from all superclasses until we hit Object.class
+	 this is for cases where access to an implementation classes is restricted, but access to the base class is allowd.
+
+	 e.g.: XMLGregorianCalenderImpl.clone() cannot be accessed in recent java version because it is in a module
+	 and not exported, but the XMLGregorianCalendar.clone() is public and can be accessed from everywhere.
+	 Due to v-table-lookup an invokation will still end up calling XMLGregorianCalenderImpl.clone()
+	*/
+	private static Method getCallableCloneMethod(Cloneable object, Method canAccessMethod) {
+		Class<?> cur = object.getClass();
+		while (cur != null && cur != Object.class) {
+			try {
+				final Method method = cur.getMethod("clone", (Class<?>[]) null);
+				if (Modifier.isPublic(method.getModifiers()) && canAccess(canAccessMethod, method, object)) {
+					return method;
+				}
+			} catch (ReflectiveOperationException roe) {
+				return null;
+			}
+			cur = cur.getSuperclass();
+		}
+		return null;
+	}
+
+	private static boolean canAccess(Method canAccessMethod, Method method, Object object)
+		  throws IllegalAccessException, InvocationTargetException {
+		// if "canAccessMethod" does not exist, assume it can be accessed (by calling setAccessible later)
+		return canAccessMethod == null || (Boolean) canAccessMethod.invoke(method, object);
+	}
+
+	private static Method getCanAccessMethod() {
+		try {
+			return Method.class.getMethod("canAccess", Object.class);
+		} catch (NoSuchMethodException e) {
+			return null; // java8
 		}
 	}
 
