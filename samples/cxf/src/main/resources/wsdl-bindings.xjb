@@ -33,14 +33,14 @@
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb">
+	xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb">
 
-	<jaxws:package name="org.jvnet.jaxb2_commons.tests.cxf.wsdl"/>
+	<jaxws:package name="org.jvnet.jaxb3_commons.tests.cxf.wsdl"/>
 
 	<jaxws:bindings
 		node="wsdl:definitions/wsdl:types/xs:schema">
 		<jaxb:schemaBindings>
-			<jaxb:package name="org.jvnet.jaxb2_commons.tests.cxf.wsdl_schema"/>
+			<jaxb:package name="org.jvnet.jaxb3_commons.tests.cxf.wsdl_schema"/>
 		</jaxb:schemaBindings>
 	</jaxws:bindings>
 

@@ -1,6 +1,6 @@
 <jaxb:bindings
-	version="1.0"
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	version="3.0"
+	xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
 	xmlns:hj="http://hyperjaxb3.jvnet.org/ejb/schemas/customizations"
@@ -8,12 +8,12 @@
 	xmlns:b="b">
 
 	<jaxb:globalBindings>
-		<xjc:superClass name="org.jvnet.jaxb2_commons.test.superclass.a.AbstractObject"/>
+		<xjc:superClass name="org.jvnet.jaxb3_commons.test.superclass.a.AbstractObject"/>
 	</jaxb:globalBindings>
 	
 	<jaxb:bindings scd="x-schema::b">
 		<jaxb:schemaBindings>
-			<jaxb:package name="org.jvnet.jaxb2_commons.test.superclass.b"/>
+			<jaxb:package name="org.jvnet.jaxb3_commons.test.superclass.b"/>
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
 

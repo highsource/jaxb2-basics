@@ -1,10 +1,10 @@
 <jaxb:bindings
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+	xmlns:inheritance="http://jaxb3-commons.dev.java.net/basic/inheritance"
 	jaxb:extensionBindingPrefixes="inheritance"
 
-	jaxb:version="2.1">
+	jaxb:version="3.0">
 
 	<jaxb:bindings schemaLocation="schema.xsd" node="/xsd:schema">
 		<jaxb:bindings node="xsd:element[@name='issueJIIB38']">
@@ -12,7 +12,7 @@
 			<inheritance:implements>java.lang.Cloneable</inheritance:implements>
 		</jaxb:bindings>
 		<jaxb:bindings node="xsd:complexType[@name='issueGH70Type']">
-			<inheritance:implements>org.jvnet.jaxb2_commons.tests.issues.IssueGH70Interface</inheritance:implements>
+			<inheritance:implements>org.jvnet.jaxb3_commons.tests.issues.IssueGH70Interface</inheritance:implements>
 		</jaxb:bindings>
 	</jaxb:bindings>
 </jaxb:bindings>

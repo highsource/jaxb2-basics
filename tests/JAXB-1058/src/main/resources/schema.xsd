@@ -5,15 +5,15 @@
 	targetNamespace="urn:test"
 	elementFormDefault="qualified"
 	attributeFormDefault="unqualified"
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-	jaxb:version="2.1">
+	xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+	jaxb:version="3.0">
 
 	<xs:annotation>
 		<xs:appinfo>
 			<jaxb:globalBindings generateMixedExtensions="true" generateIsSetMethod="true"/>
 
 			<jaxb:schemaBindings>
-				<jaxb:package name="org.jvnet.jaxb2_commons.tests.JAXB_1058" />
+				<jaxb:package name="org.jvnet.jaxb3_commons.tests.JAXB_1058" />
 			</jaxb:schemaBindings>
 		</xs:appinfo>
 	</xs:annotation>

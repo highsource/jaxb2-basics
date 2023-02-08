@@ -2,66 +2,66 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jvnet.jaxb2_commons</groupId>
-	<artifactId>jaxb2-basics-dist</artifactId>
+	<groupId>org.jvnet.jaxb3_commons</groupId>
+	<artifactId>jaxb3-basics-dist</artifactId>
 	<packaging>pom</packaging>
-	<name>JAXB2 Basics - Distribution</name>
+	<name>JAXB3 Basics - Distribution</name>
 	<parent>
-		<groupId>org.jvnet.jaxb2_commons</groupId>
-		<artifactId>jaxb2-basics-project</artifactId>
-		<version>2.3.6-SNAPSHOT</version>
+		<groupId>org.jvnet.jaxb3_commons</groupId>
+		<artifactId>jaxb3-basics-project</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jaxb2-basics-plugins</artifactId>
+			<artifactId>jaxb3-basics-plugins</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jaxb2-basics-sample-po</artifactId>
+			<artifactId>jaxb3-basics-sample-po</artifactId>
 			<type>zip</type>
 			<classifier>maven-src</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jaxb2-basics-sample-po</artifactId>
+			<artifactId>jaxb3-basics-sample-po</artifactId>
 			<type>zip</type>
 			<classifier>ant-src</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jaxb2-basics-sample-po-simple</artifactId>
+			<artifactId>jaxb3-basics-sample-po-simple</artifactId>
 			<type>zip</type>
 			<classifier>maven-src</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jaxb2-basics-sample-po-simple</artifactId>
+			<artifactId>jaxb3-basics-sample-po-simple</artifactId>
 			<type>zip</type>
 			<classifier>ant-src</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jaxb2-basics-sample-basic</artifactId>
+			<artifactId>jaxb3-basics-sample-basic</artifactId>
 			<type>zip</type>
 			<classifier>maven-src</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jaxb2-basics-sample-basic</artifactId>
+			<artifactId>jaxb3-basics-sample-basic</artifactId>
 			<type>zip</type>
 			<classifier>ant-src</classifier>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jaxb2-basics-sample-cxf</artifactId>
+			<artifactId>jaxb3-basics-sample-cxf</artifactId>
 			<type>zip</type>
 			<classifier>maven-src</classifier>
 			<version>${project.version}</version>

@@ -1,7 +1,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" elementFormDefault="qualified"
+	xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb" elementFormDefault="qualified"
 	attributeFormDefault="unqualified" targetNamespace="urn:t" xmlns:tns="urn:t"
-	jaxb:version="2.1">
+	jaxb:version="3.0">
 
 	<xs:annotation>
 		<xs:appinfo>
@@ -10,7 +10,7 @@
 			</jaxb:globalBindings-->
 			<jaxb:schemaBindings>
 				<jaxb:package
-					name="org.jvnet.jaxb2_commons.tests.simple_hashcode_equals_01.cases" />
+					name="org.jvnet.jaxb3_commons.tests.simple_hashcode_equals_01.cases" />
 			</jaxb:schemaBindings>
 		</xs:appinfo>
 	</xs:annotation>
