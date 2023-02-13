@@ -110,7 +110,7 @@
 			<!-- Plugins -->
 			<classpath>
 				<fileset dir="${basedir}/lib">
-					<include name="jaxb2-basics-plugins-*.jar"/>
+					<include name="jaxb3-basics-plugins-*.jar"/>
 				</fileset>
 			</classpath>
 		</xjc>

@@ -37,8 +37,8 @@
 		<defaultGoal>test</defaultGoal>
 		<plugins>
 			<plugin>
-				<groupId>com.evolvedbinary.maven.jvnet</groupId>
-				<artifactId>jaxb30-maven-plugin</artifactId>
+				<groupId>org.jvnet.jaxb</groupId>
+				<artifactId>jaxb3-maven-plugin</artifactId>
 				<version>${maven-jaxb3-plugin.version}</version>
 				<executions>
 					<execution>

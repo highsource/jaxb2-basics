@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jvnet.jaxb2.maven2.AbstractXJCMojo;
-import org.jvnet.jaxb2.maven2.test.RunXJC2Mojo;
+import org.jvnet.jaxb.AbstractXJC3Mojo;
+import org.jvnet.jaxb.test.RunXJC3Mojo;
 
-public class RunEqualsPlugin extends RunXJC2Mojo {
+public class RunEqualsPlugin extends RunXJC3Mojo {
 
 	@Override
 	public File getSchemaDirectory() {
@@ -15,7 +15,7 @@ public class RunEqualsPlugin extends RunXJC2Mojo {
 	}
 
 	@Override
-	protected void configureMojo(AbstractXJCMojo mojo) {
+	protected void configureMojo(AbstractXJC3Mojo mojo) {
 		super.configureMojo(mojo);
 		mojo.setForceRegenerate(true);
 	}

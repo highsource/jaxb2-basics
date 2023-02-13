@@ -12,8 +12,8 @@
 	<name>JAXB3 Basics - Test [JAXB-1058]</name>
 	<dependencies>
 		<dependency>
-			<groupId>com.evolvedbinary.maven.jvnet</groupId>
-			<artifactId>jaxb-maven-plugin-testing</artifactId>
+			<groupId>org.jvnet.jaxb</groupId>
+			<artifactId>jaxb3-maven-plugin-testing</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -25,8 +25,8 @@
 		<defaultGoal>test</defaultGoal>
 		<plugins>
 			<plugin>
-				<groupId>com.evolvedbinary.maven.jvnet</groupId>
-				<artifactId>jaxb30-maven-plugin</artifactId>
+				<groupId>org.jvnet.jaxb</groupId>
+				<artifactId>jaxb3-maven-plugin</artifactId>
 				<configuration>
 					<extension>true</extension>
 					<args>

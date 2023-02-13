@@ -8,18 +8,18 @@
 	<packaging>jar</packaging>
 	<name>JAXB2 Basics - Sample [cxf-maven]</name>
 	<dependencies>
-        <dependency>
-            <groupId>javax.xml.ws</groupId>
-            <artifactId>jaxws-api</artifactId>
-            <version>2.3.1</version>
-            <scope>provided</scope>
-        </dependency>
-<dependency>
-    <groupId>javax.jws</groupId>
-    <artifactId>javax.jws-api</artifactId>
-    <version>1.1</version>
-    <scope>provided</scope>
-</dependency>
+		<dependency>
+			<groupId>jakarta.xml.ws</groupId>
+			<artifactId>jakarta.xml.ws-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.jws</groupId>
+			<artifactId>jakarta.jws-api</artifactId>
+			<version>3.0.0</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
@@ -46,8 +46,8 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -83,17 +83,17 @@
 				</configuration>
 				<dependencies>
 					<dependency>
-			                        <groupId>org.glassfish.jaxb</groupId>
-			                        <artifactId>jaxb-runtime</artifactId>
-			                        <version>${jaxb.version}</version>
-                			</dependency>
+						<groupId>org.glassfish.jaxb</groupId>
+						<artifactId>jaxb-runtime</artifactId>
+						<version>${jaxb.version}</version>
+					</dependency>
 					<dependency>
-			                        <groupId>org.glassfish.jaxb</groupId>
+						<groupId>org.glassfish.jaxb</groupId>
 						<artifactId>jaxb-xjc</artifactId>
 						<version>${jaxb.version}</version>
 					</dependency>
 					<dependency>
-			                        <groupId>org.glassfish.jaxb</groupId>
+						<groupId>org.glassfish.jaxb</groupId>
 						<artifactId>jaxb-core</artifactId>
 						<version>${jaxb-core.version}</version>
 					</dependency>

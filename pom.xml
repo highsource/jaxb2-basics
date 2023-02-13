@@ -174,9 +174,9 @@
 		<jaxb-api.version>3.0.1</jaxb-api.version>
 		<jaxb-core.version>3.0.2</jaxb-core.version>
 		<activation.version>2.0.1</activation.version>
-		<maven-jaxb3-plugin.version>0.15.0</maven-jaxb3-plugin.version>
-        <maven-nexus-staging-maven-plugin.version>1.6.8</maven-nexus-staging-maven-plugin.version>
-		<cxf-codegen-plugin.version>3.3.13</cxf-codegen-plugin.version>
+		<maven-jaxb3-plugin.version>4.0.0-SNAPSHOT</maven-jaxb3-plugin.version>
+		<maven-nexus-staging-maven-plugin.version>1.6.8</maven-nexus-staging-maven-plugin.version>
+		<cxf-codegen-plugin.version>4.0.0</cxf-codegen-plugin.version>
 		<slf4j.version>1.7.36</slf4j.version>
 	</properties>
 	<prerequisites>
@@ -224,13 +224,13 @@
 			</dependency>
 			<!-- Maven JAXB3 Plugin -->
 			<dependency>
-				<groupId>com.evolvedbinary.maven.jvnet</groupId>
-				<artifactId>jaxb30-maven-plugin</artifactId>
+				<groupId>org.jvnet.jaxb</groupId>
+				<artifactId>jaxb3-maven-plugin</artifactId>
 				<version>${maven-jaxb3-plugin.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.evolvedbinary.maven.jvnet</groupId>
-				<artifactId>jaxb-maven-plugin-testing</artifactId>
+				<groupId>org.jvnet.jaxb</groupId>
+				<artifactId>jaxb3-maven-plugin-testing</artifactId>
 				<version>${maven-jaxb3-plugin.version}</version>
 			</dependency>
 			<!-- JAXB -->
@@ -467,8 +467,8 @@
 					<version>3.0.1</version>
 				</plugin>
 				<plugin>
-					<groupId>com.evolvedbinary.maven.jvnet</groupId>
-					<artifactId>jaxb30-maven-plugin</artifactId>
+					<groupId>org.jvnet.jaxb</groupId>
+					<artifactId>jaxb3-maven-plugin</artifactId>
 					<version>${maven-jaxb3-plugin.version}</version>
 					<executions>
 						<execution>

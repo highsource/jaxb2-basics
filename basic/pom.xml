@@ -32,8 +32,8 @@
 			<artifactId>javaparser</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.evolvedbinary.maven.jvnet</groupId>
-			<artifactId>jaxb-maven-plugin-testing</artifactId>
+			<groupId>org.jvnet.jaxb</groupId>
+			<artifactId>jaxb3-maven-plugin-testing</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -78,7 +78,7 @@
 										<pluginExecution>
 											<pluginExecutionFilter>
 												<groupId>
-													org.jvnet.jaxb2.maven2
+													org.jvnet.jaxb
 												</groupId>
 												<artifactId>
 													maven-jaxb2-plugin
