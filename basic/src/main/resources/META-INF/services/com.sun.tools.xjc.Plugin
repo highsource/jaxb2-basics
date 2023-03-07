@@ -17,3 +17,6 @@ org.jvnet.jaxb3_commons.plugin.fixjaxb1058.FixJAXB1058Plugin
 org.jvnet.jaxb3_commons.plugin.customizations.CustomizationsPlugin
 org.jvnet.jaxb3_commons.plugin.value_constructor.ValueConstructorPlugin
 org.jvnet.jaxb3_commons.plugin.fluent_api.FluentApiPlugin
+org.jvnet.jaxb3_commons.plugin.namespace_prefix.NamespacePrefixPlugin
+org.jvnet.jaxb3_commons.plugin.defaultvalueplugin.DefaultValuePlugin
+org.jvnet.jaxb3_commons.plugin.commons_lang.XjcCommonsLangPlugin

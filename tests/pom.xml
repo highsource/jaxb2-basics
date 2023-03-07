@@ -22,6 +22,9 @@
 		<module>superclass</module>
 		<module>wildcard</module>
 		<module>zj</module>
+		<module>namespace</module>
+		<module>defaultvalue</module>
+		<module>commons_lang</module>
 	</modules>
 	<dependencies>
 		<dependency>
