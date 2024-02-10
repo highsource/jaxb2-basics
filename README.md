@@ -3,6 +3,12 @@
 JAXB2 Basics is an [open source](https://github.com/highsource/jaxb2-basics/blob/master/LICENSE) project
 which provides useful plugins and tools for [JAXB 2.x reference implementation](https://jaxb.java.net/).
 
+IMPORTANT NOTE
+--------------
+
+This repository has been merged in [jaxb-tools](https://github.com/highsource/jaxb-tools) repository along maven-jaxb2-plugin.  
+Users are encouraged to read the [migration guide](https://github.com/highsource/jaxb-tools/wiki/JAXB-Tools-Migration-Guide) to get the latest version of the plugin according their JAXB version
+
 # Documentation
 
 Please refer to the [wiki](https://github.com/highsource/jaxb2-basics/wiki) for documentation.
