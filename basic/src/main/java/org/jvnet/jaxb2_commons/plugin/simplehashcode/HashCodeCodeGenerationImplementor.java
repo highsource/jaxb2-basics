@@ -35,6 +35,15 @@ public class HashCodeCodeGenerationImplementor extends
 				true);
 	}
 
+	//DEMATIC
+	private void ifHasSetValueAssignPlusValue(
+			HashCodeArguments arguments, JBlock block, boolean isAlwaysSet) {
+		ifHasSetValueAssignPlusValueHashCode(arguments, block,
+				arguments.value(), isAlwaysSet,
+				true);
+	}
+
+	
 	@Override
 	public void onArray(JBlock block, boolean isAlwaysSet,
 			HashCodeArguments arguments) {
@@ -57,7 +66,7 @@ public class HashCodeCodeGenerationImplementor extends
 	@Override
 	public void onByte(HashCodeArguments arguments, JBlock block,
 			boolean isAlwaysSet) {
-		ifHasSetValueAssignPlusValueCastedToInt(arguments, block, isAlwaysSet);
+		ifHasSetValueAssignPlusValue(arguments, block, isAlwaysSet); //DEMATIC
 	}
 
 	@Override
@@ -111,7 +120,7 @@ public class HashCodeCodeGenerationImplementor extends
 	@Override
 	public void onShort(HashCodeArguments arguments, JBlock block,
 			boolean isAlwaysSet) {
-		ifHasSetValueAssignPlusValueCastedToInt(arguments, block, isAlwaysSet);
+		ifHasSetValueAssignPlusValue(arguments, block, isAlwaysSet); //DEMATIC
 	}
 
 	@Override
