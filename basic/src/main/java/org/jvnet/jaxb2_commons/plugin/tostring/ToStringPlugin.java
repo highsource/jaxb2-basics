@@ -122,22 +122,19 @@ public class ToStringPlugin extends AbstractParameterizablePlugin {
 		final JCodeModel codeModel = theClass.owner();
 		final JMethod object$toString = theClass.method(JMod.PUBLIC,
 				codeModel.ref(String.class), "toString");
-		object$toString.annotate(Override.class);
-		{
-			final JBlock body = object$toString.body();
+		object$toString.annotate(Override.class); // DEMATIC
 
-			final JVar toStringStrategy =
+		final JBlock body = object$toString.body();
 
-			body.decl(JMod.FINAL, codeModel.ref(ToStringStrategy2.class),
-					"strategy", createToStringStrategy(codeModel));
+		final JVar toStringStrategy = body.decl(JMod.FINAL, codeModel.ref(ToStringStrategy2.class),
+				"strategy2", createToStringStrategy(codeModel));
 
-			final JVar buffer = body.decl(JMod.FINAL,
-					codeModel.ref(StringBuilder.class), "buffer",
-					JExpr._new(codeModel.ref(StringBuilder.class)));
-			body.invoke("append").arg(JExpr._null()).arg(buffer)
-					.arg(toStringStrategy);
-			body._return(buffer.invoke("toString"));
-		}
+		final JVar buffer = body.decl(JMod.FINAL,
+				codeModel.ref(StringBuilder.class), "buffer",
+				JExpr._new(codeModel.ref(StringBuilder.class)));
+		body.invoke("append").arg(JExpr._null()).arg(buffer).arg(toStringStrategy);
+		body._return(buffer.invoke("toString"));
+		
 		return object$toString;
 	}
 
@@ -146,90 +143,92 @@ public class ToStringPlugin extends AbstractParameterizablePlugin {
 		final JCodeModel codeModel = theClass.owner();
 		final JMethod toString$append = theClass.method(JMod.PUBLIC,
 				codeModel.ref(StringBuilder.class), "append");
-		toString$append.annotate(Override.class);
-		{
+		toString$append.annotate(Override.class); // DEMATIC
 
-			final JVar locator = toString$append.param(ObjectLocator.class,
-					"locator");
-			final JVar buffer = toString$append.param(StringBuilder.class,
-					"buffer");
-			final JVar toStringStrategy = toString$append.param(
-					ToStringStrategy2.class, "strategy");
+		final JVar locator = toString$append.param(ObjectLocator.class, "locator");
+		final JVar buffer = toString$append.param(StringBuilder.class, "buffer");
+		final JVar toStringStrategy = toString$append.param(
+				ToStringStrategy2.class, "strategy2");
 
-			final JBlock body = toString$append.body();
+		final JBlock body = toString$append.body();
 
-			body.invoke(toStringStrategy, "appendStart").arg(locator)
-					.arg(JExpr._this()).arg(buffer);
-			body.invoke("appendFields").arg(locator).arg(buffer)
-					.arg(toStringStrategy);
-			body.invoke(toStringStrategy, "appendEnd").arg(locator)
-					.arg(JExpr._this()).arg(buffer);
-			body._return(buffer);
-		}
+		body.invoke(toStringStrategy, "appendStart").arg(locator)
+				.arg(JExpr._this()).arg(buffer);
+		body.invoke("appendFields").arg(locator).arg(buffer)
+				.arg(toStringStrategy);
+		body.invoke(toStringStrategy, "appendEnd").arg(locator)
+				.arg(JExpr._this()).arg(buffer);
+		body._return(buffer);
+
 		return toString$append;
 	}
 
-	protected JMethod generateToString$appendFields(ClassOutline classOutline,
-			final JDefinedClass theClass) {
+	protected JMethod generateToString$appendFields(ClassOutline classOutline, final JDefinedClass theClass) {
 		final JCodeModel codeModel = theClass.owner();
 
 		final JMethod toString$appendFields = theClass.method(JMod.PUBLIC,
 				codeModel.ref(StringBuilder.class), "appendFields");
-		toString$appendFields.annotate(Override.class);
-		{
-			final JVar locator = toString$appendFields.param(
-					ObjectLocator.class, "locator");
-			final JVar buffer = toString$appendFields.param(
-					StringBuilder.class, "buffer");
-			final JVar toStringStrategy = toString$appendFields.param(
-					ToStringStrategy2.class, "strategy");
-			final JBlock body = toString$appendFields.body();
+		toString$appendFields.annotate(Override.class); // DEMATIC
+		
+		final JVar locator = toString$appendFields.param(
+				ObjectLocator.class, "locator");
+		final JVar buffer = toString$appendFields.param(
+				StringBuilder.class, "buffer");
+		final JVar toStringStrategy = toString$appendFields.param(
+				ToStringStrategy2.class, "strategy2");
+		final JBlock body = toString$appendFields.body();
 
-			final Boolean superClassImplementsToString = StrategyClassUtils
-					.superClassImplements(classOutline, ignoring,
-							ToString2.class);
+		final Boolean superClassImplementsToString = StrategyClassUtils
+				.superClassImplements(classOutline, ignoring,
+						ToString2.class);
 
-			if (superClassImplementsToString == null) {
-				// No superclass
-			} else if (superClassImplementsToString.booleanValue()) {
-				body.invoke(JExpr._super(), "appendFields").arg(locator)
-						.arg(buffer).arg(toStringStrategy);
-			} else {
-				// Superclass does not implement ToString
-			}
-
-			final FieldOutline[] declaredFields = FieldOutlineUtils.filter(
-					classOutline.getDeclaredFields(), getIgnoring());
-
-			if (declaredFields.length > 0) {
-
-				for (final FieldOutline fieldOutline : declaredFields) {
-					final JBlock block = body.block();
-					final FieldAccessorEx fieldAccessor = getFieldAccessorFactory()
-							.createFieldAccessor(fieldOutline, JExpr._this());
-					final JVar theValue = block.decl(
-							fieldAccessor.getType(),
-							"the"
-									+ fieldOutline.getPropertyInfo().getName(
-											true));
-
-					final JExpression valueIsSet = (fieldAccessor.isAlwaysSet() || fieldAccessor
-							.hasSetValue() == null) ? JExpr.TRUE
-							: fieldAccessor.hasSetValue();
-
-					fieldAccessor.toRawValue(block, theValue);
-
-					block.invoke(toStringStrategy, "appendField")
-							.arg(locator)
-							.arg(JExpr._this())
-							.arg(JExpr.lit(fieldOutline.getPropertyInfo()
-									.getName(false))).arg(buffer).arg(theValue)
-							.arg(valueIsSet);
-				}
-			}
-			body._return(buffer);
+		if (superClassImplementsToString == null) {
+			// No superclass
+		} else if (superClassImplementsToString.booleanValue()) {
+			body.invoke(JExpr._super(), "appendFields").arg(locator)
+					.arg(buffer).arg(toStringStrategy);
+		} else {
+			// Superclass does not implement ToString
 		}
+
+		final FieldOutline[] declaredFields = FieldOutlineUtils.filter(
+				classOutline.getDeclaredFields(), getIgnoring());
+
+		if (declaredFields.length > 0) {
+
+			for (final FieldOutline fieldOutline : declaredFields) {
+				final JBlock block = body; //DEMATIC
+				final FieldAccessorEx fieldAccessor = getFieldAccessorFactory().createFieldAccessor(fieldOutline, JExpr._this());
+				
+				//final JVar theValue = block.decl(fieldAccessor.getType(),"the"+ fieldOutline.getPropertyInfo().getName(true));
+				//fieldAccessor.toRawValue(block, theValue);
+
+				String propertyName = fieldOutline.getPropertyInfo().getName(true);
+				final JVar theValue = block.decl(fieldAccessor.getType(), "the" + propertyName,JExpr._this().invoke(createMethodName(fieldOutline))); // DEMATIC 
+				
+				final JExpression valueIsSet = (fieldAccessor.isAlwaysSet() || fieldAccessor
+						.hasSetValue() == null) ? JExpr.TRUE
+						: fieldAccessor.hasSetValue();
+
+				block.invoke(toStringStrategy, "appendField")
+						.arg(locator)
+						.arg(JExpr._this())
+						.arg(JExpr.lit(fieldOutline.getPropertyInfo()
+								.getName(false))).arg(buffer).arg(theValue)
+						.arg(valueIsSet);
+			}
+		}
+		body._return(buffer);
 		return toString$appendFields;
+	}
+	
+	private String createMethodName(FieldOutline fieldOutline) {
+		String name = fieldOutline.getPropertyInfo().getName(true);
+		String type = fieldOutline.getRawType().name();
+		if (type.toLowerCase().equals("boolean")) {
+			return "is" + name;
+		}
+		return "get" + name;
 	}
 
 }
